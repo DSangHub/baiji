@@ -1,0 +1,664 @@
+<!DOCTYPE html>
+<html lang="pa" class="h-full bg-slate-900 text-slate-100">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>Baiji.app - ਬਾਈ ਜੀ (ਸਾਡਾ ਅਪਣਾ ਏ.ਆਈ. ਵੀਰ)</title>
+  
+  <!-- PWA Meta Tags -->
+  <meta name="theme-color" content="#064e3b" />
+  <meta name="description" content="Voice-first AI assistant for Punjab - Simple spoken everyday help in Punjabi" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <link rel="apple-touch-icon" href="https://placehold.co/192x192/064e3b/f59e0b?text=ਬਾਈ+ਜੀ" />
+
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Google Fonts: Noto Sans Gurmukhi & Inter -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Noto+Sans+Gurmukhi:wght@400;600;700;800&display=swap" rel="stylesheet">
+
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['"Noto Sans Gurmukhi"', 'Inter', 'sans-serif'],
+          },
+          colors: {
+            saffron: {
+              400: '#fbbf24',
+              500: '#f59e0b',
+              600: '#d97706',
+              700: '#b45309',
+            },
+            punjabGreen: {
+              800: '#064e3b',
+              900: '#022c22',
+            }
+          },
+          animation: {
+            'pulse-slow': 'pulse 2.5s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+            'spin-slow': 'spin 8s linear infinite',
+            'ripple': 'ripple 1.5s ease-out infinite',
+          },
+          keyframes: {
+            ripple: {
+              '0%': { transform: 'scale(0.95)', opacity: '0.8' },
+              '100%': { transform: 'scale(1.5)', opacity: '0' },
+            }
+          }
+        }
+      }
+    }
+  </script>
+
+  <style>
+    /* Custom Scrollbar and visual tweaks */
+    ::-webkit-scrollbar {
+      width: 6px;
+    }
+    ::-webkit-scrollbar-track {
+      background: rgba(15, 23, 42, 0.6);
+    }
+    ::-webkit-scrollbar-thumb {
+      background: #f59e0b;
+      border-radius: 9999px;
+    }
+    body {
+      touch-action: manipulation;
+      user-select: none;
+      -webkit-tap-highlight-color: transparent;
+    }
+    .glow-amber {
+      box-shadow: 0 0 35px -5px rgba(245, 158, 11, 0.5);
+    }
+    .glow-green {
+      box-shadow: 0 0 35px -5px rgba(16, 185, 129, 0.5);
+    }
+  </style>
+</head>
+<body class="h-full flex flex-col justify-between bg-gradient-to-b from-slate-950 via-punjabGreen-900 to-slate-950 font-sans overflow-x-hidden">
+
+  <!-- HEADER & NAVBAR -->
+  <header class="w-full bg-punjabGreen-800/80 backdrop-blur-md border-b border-saffron-500/30 px-4 py-3 sticky top-0 z-40 shadow-lg">
+    <div class="max-w-md mx-auto flex items-center justify-between">
+      <!-- App Brand Title -->
+      <div class="flex items-center space-x-3">
+        <div class="w-11 h-11 rounded-2xl bg-gradient-to-tr from-saffron-600 via-saffron-500 to-amber-300 flex items-center justify-center text-slate-950 font-black text-2xl shadow-md border border-amber-200">
+          ਬਾ
+        </div>
+        <div>
+          <h1 class="text-xl font-extrabold text-white leading-tight tracking-wide flex items-center gap-1.5">
+            <span>Baiji.app</span>
+            <span class="text-saffron-400 font-bold text-lg">(ਬਾਈ ਜੀ)</span>
+          </h1>
+          <p class="text-xs text-amber-200/90 font-medium">ਸਾਡਾ ਅਪਣਾ ਏ.ਆਈ. ਵੀਰ • Voice Help</p>
+        </div>
+      </div>
+
+      <!-- Controls Right: Language & Settings -->
+      <div class="flex items-center space-x-2">
+        <!-- Language Selector -->
+        <select id="langSelect" class="bg-slate-900/90 text-amber-300 text-xs font-semibold px-2.5 py-1.5 rounded-xl border border-saffron-500/40 focus:outline-none focus:ring-2 focus:ring-saffron-500">
+          <option value="pa-IN" selected>ਪੰਜਾਬੀ (Punjabi)</option>
+          <option value="hi-IN">ਹਿੰਦੀ (Hindi)</option>
+          <option value="en-IN">English</option>
+        </select>
+
+        <!-- Gemini API Key Config Button -->
+        <button id="apiModalBtn" title="Gemini Settings" class="p-2 rounded-xl bg-slate-900/80 text-amber-400 border border-amber-500/30 hover:bg-slate-800 transition">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path>
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
+          </svg>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- MAIN CONTENT CONTAINER -->
+  <main class="flex-1 max-w-md w-full mx-auto px-4 py-4 flex flex-col justify-between items-center space-y-4">
+
+    <!-- Status Banner Indicator -->
+    <div class="w-full text-center">
+      <div id="statusBadge" class="inline-flex items-center space-x-2 px-4 py-1.5 rounded-full bg-slate-900/90 border border-saffron-500/40 text-saffron-400 font-semibold text-sm sm:text-base shadow-inner">
+        <span id="statusDot" class="w-3 h-3 rounded-full bg-saffron-500 animate-ping"></span>
+        <span id="statusText">ਨੱਪੋ ਤੇ ਬੋਲੋ / Tap Mic to Speak</span>
+      </div>
+    </div>
+
+    <!-- CANVAS AUDIO VISUALIZER -->
+    <div class="w-full h-20 bg-slate-950/70 rounded-2xl border border-saffron-500/20 p-2 relative overflow-hidden flex items-center justify-center">
+      <canvas id="visualizerCanvas" class="w-full h-full block"></canvas>
+      <div id="visualizerFallback" class="absolute text-xs text-amber-200/50 pointer-events-none"> Voice Audio Waveform </div>
+    </div>
+
+    <!-- CENTRAL MIC BUTTON SECTION -->
+    <div class="relative flex items-center justify-center py-4">
+      <!-- Pulsing Rings when Active -->
+      <div id="ringOuter" class="absolute w-44 h-44 rounded-full bg-saffron-500/10 border border-saffron-500/30 transition-all duration-500"></div>
+      <div id="ringInner" class="absolute w-36 h-36 rounded-full bg-saffron-500/20 border border-saffron-400/40 transition-all duration-500"></div>
+
+      <!-- Extra Large Touch Mic Button -->
+      <button id="micBtn" class="relative z-10 w-28 h-28 sm:w-32 sm:h-32 rounded-full bg-gradient-to-tr from-saffron-600 via-saffron-500 to-amber-300 text-slate-950 flex flex-col items-center justify-center shadow-2xl transition transform active:scale-95 hover:scale-105 glow-amber border-4 border-amber-200">
+        <!-- Mic Icon SVG -->
+        <svg id="micIcon" class="w-12 h-12 transition-transform duration-300" fill="currentColor" viewBox="0 0 24 24">
+          <path d="M12 14c1.66 0 3-1.34 3-3V5c0-1.66-1.34-3-3-3S9 3.34 9 5v6c0 1.66 1.34 3 3 3z"/>
+          <path d="M17 11c0 2.76-2.24 5-5 5s-5-2.24-5-5H5c0 3.53 2.61 6.43 6 6.92V21h2v-3.08c3.39-.49 6-3.39 6-6.92h-2z"/>
+        </svg>
+        <span id="micLabel" class="text-xs font-black tracking-wider uppercase mt-1">ਬੋਲੋ / SPEAK</span>
+      </button>
+    </div>
+
+    <!-- QUICK VOICE SAMPLE QUESTIONS -->
+    <div class="w-full space-y-2">
+      <div class="flex items-center justify-between text-xs font-bold text-amber-300/80 px-1">
+        <span>ਤੁਰੰਤ ਸਵਾਲ / Quick Voice Presets:</span>
+        <span class="text-[10px] text-slate-400">(ਟੈਪ ਕਰੋ / Tap to try)</span>
+      </div>
+      <div class="grid grid-cols-2 gap-2">
+        <button class="presetBtn text-left text-xs bg-slate-900/80 hover:bg-slate-800 text-amber-100 p-2.5 rounded-xl border border-saffron-500/30 transition flex items-center space-x-2" data-query="ਕਣਕ ਦੀ ਫ਼ਸਲ ਨੂੰ ਪਹਿਲਾ ਪਾਣੀ ਕਦੋਂ ਲਾਈਏ?">
+          <span class="text-saffron-400 font-bold text-base">🌾</span>
+          <span class="line-clamp-2">ਕਣਕ ਪਾਣੀ (Wheat Crop Water)</span>
+        </button>
+        <button class="presetBtn text-left text-xs bg-slate-900/80 hover:bg-slate-800 text-amber-100 p-2.5 rounded-xl border border-saffron-500/30 transition flex items-center space-x-2" data-query="ਆਧਾਰ ਕਾਰਡ ਵਿੱਚ ਫੋਨ ਨੰਬਰ ਕਿਵੇਂ ਬਦਲੀਏ?">
+          <span class="text-saffron-400 font-bold text-base">🆔</span>
+          <span class="line-clamp-2">ਆਧਾਰ ਅੱਪਡੇਟ (Aadhaar Change)</span>
+        </button>
+        <button class="presetBtn text-left text-xs bg-slate-900/80 hover:bg-slate-800 text-amber-100 p-2.5 rounded-xl border border-saffron-500/30 transition flex items-center space-x-2" data-query="ਅੱਜ ਆਲੂਆਂ ਦਾ ਮੰਡੀ ਭਾਅ ਕੀ ਹੈ?">
+          <span class="text-saffron-400 font-bold text-base">🥔</span>
+          <span class="line-clamp-2">ਮੰਡੀ ਭਾਅ (Mandi Prices)</span>
+        </button>
+        <button class="presetBtn text-left text-xs bg-slate-900/80 hover:bg-slate-800 text-amber-100 p-2.5 rounded-xl border border-saffron-500/30 transition flex items-center space-x-2" data-query="ਪੇਟ ਦਰਦ ਲਈ ਘਰੇਲੂ ਨੁਸਖਾ ਦੱਸੋ">
+          <span class="text-saffron-400 font-bold text-base">💊</span>
+          <span class="line-clamp-2">ਸਿਹਤ ਸਲਾਹ (Stomach Pain)</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- AI RESPONSE & TRANSCRIPT DISPLAY -->
+    <div class="w-full flex-1 min-h-[180px] bg-slate-900/90 rounded-2xl border border-saffron-500/30 p-4 flex flex-col justify-between space-y-3 shadow-xl">
+      <!-- User Recognized Voice Text -->
+      <div class="bg-slate-950/60 rounded-xl p-2.5 border border-slate-800">
+        <div class="text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-1 flex items-center justify-between">
+          <span>ਤੁਹਾਡਾ ਸਵਾਲ / Your Question:</span>
+          <span id="inputSourceBadge" class="text-[9px] bg-amber-500/20 text-amber-300 px-1.5 py-0.5 rounded">Voice</span>
+        </div>
+        <p id="userTranscript" class="text-sm font-medium text-amber-200 italic">"ਨੱਪ ਕੇ ਬੋਲੋ... (Say something like: 'ਕਣਕ ਨੂੰ ਪਾਣੀ ਕਦੋਂ ਲਾਈਏ?')"</p>
+      </div>
+
+      <!-- Bai Ji Spoken Answer Box -->
+      <div class="flex-1 flex flex-col justify-start">
+        <div class="text-[11px] font-bold text-saffron-400 uppercase tracking-wider mb-1 flex items-center justify-between">
+          <span>ਬਾਈ ਜੀ ਦਾ ਜਵਾਬ / Bai Ji's Advice:</span>
+          <button id="ttsPlayBtn" class="p-1 px-2.5 rounded-lg bg-saffron-500/20 text-saffron-300 hover:bg-saffron-500/30 border border-saffron-500/40 text-xs flex items-center space-x-1">
+            <svg id="ttsIcon" class="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 24 24">
+              <path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02z"/>
+            </svg>
+            <span id="ttsBtnText">ਸੁਣੋ (Listen)</span>
+          </button>
+        </div>
+        <div id="aiResponse" class="text-base font-semibold text-white leading-relaxed pt-1 space-y-1">
+          ਸਤਿ ਸ਼੍ਰੀ ਅਕਾਲ ਵੀਰ ਜੀ! ਮੈਂ ਤੁਹਾਡਾ ਬਾਈ ਜੀ। ਬਟਨ ਨੱਪ ਕੇ ਆਪਣਾ ਸਵਾਲ ਪੁੱਛੋ।
+        </div>
+      </div>
+    </div>
+
+  </main>
+
+  <!-- FOOTER -->
+  <footer class="w-full bg-slate-950/80 border-t border-slate-800 py-2.5 px-4 text-center text-xs text-slate-400">
+    <div class="max-w-md mx-auto flex items-center justify-between">
+      <span>🌾 Baiji.app • Punjab Voice AI</span>
+      <span class="text-amber-400/90 font-semibold">100% Voice First</span>
+    </div>
+  </footer>
+
+  <!-- GEMINI API CONFIG MODAL -->
+  <div id="apiModal" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+    <div class="bg-slate-900 border border-saffron-500/40 rounded-2xl max-w-sm w-full p-5 space-y-4 shadow-2xl">
+      <div class="flex items-center justify-between border-b border-slate-800 pb-3">
+        <h3 class="text-base font-bold text-amber-300">Gemini Live API Settings</h3>
+        <button id="closeModalBtn" class="text-slate-400 hover:text-white font-bold text-lg">&times;</button>
+      </div>
+      <p class="text-xs text-slate-300 leading-relaxed">
+        Connect your custom Gemini API key for dynamic real-time reasoning in Punjabi. If left empty, Baiji.app uses smart offline voice logic.
+      </p>
+      <div>
+        <label class="block text-xs font-semibold text-amber-200 mb-1">Gemini API Key:</label>
+        <input type="password" id="apiKeyInput" placeholder="AIzaSy..." class="w-full bg-slate-950 text-amber-100 text-xs px-3 py-2 rounded-xl border border-slate-700 focus:outline-none focus:border-saffron-500" />
+      </div>
+      <div class="flex space-x-2 pt-2">
+        <button id="saveKeyBtn" class="flex-1 bg-saffron-500 text-slate-950 font-bold py-2 rounded-xl text-xs hover:bg-saffron-400 transition">Save & Enable Gemini</button>
+        <button id="clearKeyBtn" class="px-3 bg-slate-800 text-slate-300 font-bold rounded-xl text-xs hover:bg-slate-700">Clear</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- JAVASCRIPT APP LOGIC -->
+  <script>
+    /*
+     * Baiji.app - Punjabi Voice Assistant Implementation
+     */
+    document.addEventListener('DOMContentLoaded', () => {
+      // DOM Elements
+      const micBtn = document.getElementById('micBtn');
+      const micIcon = document.getElementById('micIcon');
+      const micLabel = document.getElementById('micLabel');
+      const statusBadge = document.getElementById('statusBadge');
+      const statusText = document.getElementById('statusText');
+      const statusDot = document.getElementById('statusDot');
+      const ringOuter = document.getElementById('ringOuter');
+      const ringInner = document.getElementById('ringInner');
+      const userTranscript = document.getElementById('userTranscript');
+      const aiResponse = document.getElementById('aiResponse');
+      const ttsPlayBtn = document.getElementById('ttsPlayBtn');
+      const ttsBtnText = document.getElementById('ttsBtnText');
+      const langSelect = document.getElementById('langSelect');
+      const canvas = document.getElementById('visualizerCanvas');
+      const ctx = canvas.getContext('2d');
+
+      // Modal elements
+      const apiModalBtn = document.getElementById('apiModalBtn');
+      const apiModal = document.getElementById('apiModal');
+      const closeModalBtn = document.getElementById('closeModalBtn');
+      const saveKeyBtn = document.getElementById('saveKeyBtn');
+      const clearKeyBtn = document.getElementById('clearKeyBtn');
+      const apiKeyInput = document.getElementById('apiKeyInput');
+
+      // State Management
+      let isListening = false;
+      let isSpeaking = false;
+      let recognition = null;
+      let synth = window.speechSynthesis;
+      let currentUtterance = null;
+      let geminiApiKey = localStorage.getItem('baiji_gemini_key') || '';
+      if(geminiApiKey) apiKeyInput.value = geminiApiKey;
+
+      // Audio Visualizer State
+      let audioCtx = null;
+      let analyser = null;
+      let microphoneStream = null;
+      let animFrameId = null;
+
+      // Initialize Web Canvas Size
+      function resizeCanvas() {
+        canvas.width = canvas.parentElement.clientWidth;
+        canvas.height = canvas.parentElement.clientHeight;
+      }
+      resizeCanvas();
+      window.addEventListener('resize', resizeCanvas);
+
+      // Initialize Web Speech Recognition
+      const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+
+      if (SpeechRecognition) {
+        recognition = new SpeechRecognition();
+        recognition.continuous = false;
+        recognition.interimResults = true;
+        recognition.lang = langSelect.value;
+
+        recognition.onstart = () => {
+          isListening = true;
+          updateUIState('listening');
+          startAudioVisualizer();
+        };
+
+        recognition.onresult = (event) => {
+          let transcript = '';
+          for (let i = event.resultIndex; i < event.results.length; i++) {
+            transcript += event.results[i][0].transcript;
+          }
+          userTranscript.textContent = `"${transcript}"`;
+        };
+
+        recognition.onerror = (event) => {
+          console.warn('Speech recognition error:', event.error);
+          stopListening();
+          updateUIState('idle');
+          if(event.error === 'no-speech') {
+            statusText.textContent = 'ਕੋਈ ਆਵਾਜ਼ ਨਹੀਂ ਸੁਣੀ / No voice detected';
+          }
+        };
+
+        recognition.onend = () => {
+          stopListening();
+          const spokenText = userTranscript.textContent.replace(/^"|"$/g, '').trim();
+          if (spokenText && spokenText !== "ਨੱਪ ਕੇ ਬੋਲੋ... (Say something like: 'ਕਣਕ ਨੂੰ ਪਾਣੀ ਕਦੋਂ ਲਾਈਏ?')") {
+            processVoiceQuery(spokenText);
+          } else {
+            updateUIState('idle');
+          }
+        };
+      } else {
+        statusText.textContent = 'Speech Recognition Not Supported';
+      }
+
+      // Preset Local Punjabi Knowledgebase (Fallback offline)
+      const punjabiKnowledgebase = [
+        {
+          keywords: ['ਕਣਕ', 'ਪਾਣੀ', 'ਫ਼ਸਲ', 'ਖੇਤੀ', 'wheat', 'water'],
+          answer: "ਵੀਰ ਜੀ! ਕਣਕ ਬੀਜਣ ਤੋਂ 20 ਤੋਂ 25 ਦਿਨਾਂ ਬਾਅਦ ਪਹਿਲਾ ਪਾਣੀ (ਕੋਰ ਪਾਣੀ) ਲਾਓ। ਪਾਣੀ ਤੋਂ ਬਾਅਦ ਥੋੜ੍ਹੀ ਯੂਰੀਆ ਖਾਦ ਪਾਓ।"
+        },
+        {
+          keywords: ['ਆਧਾਰ', 'ਫੋਨ', 'ਨੰਬਰ', 'ਮੋਬਾਈਲ', 'aadhaar', 'phone'],
+          answer: "ਬਾਈ ਜੀ! ਆਧਾਰ ਕਾਰਡ ਵਿੱਚ ਫੋਨ ਨੰਬਰ ਬਦਲਣ ਲਈ ਨੇੜਲੇ ਸੇਵਾ ਕੇਂਦਰ ਜਾਂ ਡਾਕਖਾਨੇ (Post Office) ਵਿੱਚ ਆਪਣਾ ਆਧਾਰ ਕਾਰਡ ਲੈ ਕੇ ਜਾਓ।"
+        },
+        {
+          keywords: ['ਆਲੂ', 'ਮੰਡੀ', 'ਭਾਅ', 'ਰੇਟ', 'mandi', 'potato'],
+          answer: "ਵੀਰ ਜੀ! ਅੱਜ ਪੰਜਾਬ ਦੀਆਂ ਮੁੱਖ ਮੰਡੀਆਂ ਵਿੱਚ ਆਲੂ ਲਗਭਗ 1200 ਤੋਂ 1500 ਰੁਪਏ ਪ੍ਰਤੀ ਕੁਇੰਟਲ ਵਿਕ ਰਹੇ ਨੇ।"
+        },
+        {
+          keywords: ['ਪੇਟ', 'ਦਰਦ', 'ਸਿਹਤ', 'ਨੁਸਖਾ', 'stomach', 'pain'],
+          answer: "ਭੈਣ ਜੀ! ਪਹਿਲਾਂ ਕੋਸਾ ਪਾਣੀ ਪੀਓ ਅਤੇ ਜਵੈਣ ਖਾਓ। ਜੇ ਦਰਦ ਜ਼ਿਆਦਾ ਹੈ ਤਾਂ ਨੇੜਲੇ ਸਰਕਾਰੀ ਡਿਸਪੈਂਸਰੀ ਜਾਂ ਡਾਕਟਰ ਨੂੰ ਦਿਖਾਓ।"
+        }
+      ];
+
+      // Process Spoken Query via Gemini or Local KB
+      async function processVoiceQuery(query) {
+        updateUIState('thinking');
+
+        let replyText = "";
+
+        if (geminiApiKey) {
+          try {
+            replyText = await callGeminiApi(query);
+          } catch (err) {
+            console.error('Gemini API Error, falling back:', err);
+            replyText = searchLocalKnowledgebase(query);
+          }
+        } else {
+          // Simulate slight processing delay for natural feel
+          await new Promise(r => setTimeout(r, 800));
+          replyText = searchLocalKnowledgebase(query);
+        }
+
+        aiResponse.innerHTML = `<p>${replyText}</p>`;
+        speakText(replyText);
+      }
+
+      // Search Offline KB
+      function searchLocalKnowledgebase(query) {
+        const lower = query.toLowerCase();
+        for (const item of punjabiKnowledgebase) {
+          if (item.keywords.some(kw => lower.includes(kw))) {
+            return item.answer;
+          }
+        }
+        return `ਵੀਰ ਜੀ! ਤੁਹਾਡਾ ਸਵਾਲ ਸਮਝ ਆ ਗਿਆ ਹੈ। "${query}" ਲਈ ਨੇੜਲੇ ਸੇਵਾ ਕੇਂਦਰ ਜਾਂ ਸਬੰਧਤ ਮਾਹਰ ਨਾਲ ਸੰਪਰਕ ਕਰੋ।`;
+      }
+
+      // Call Gemini API (gemini-3-flash-preview)
+      async function callGeminiApi(userPrompt) {
+        const systemInstruction = `You are "Bai Ji" (ਬਾਈ ਜੀ), a respectful, humble everyday Punjabi voice assistant for Punjab.
+1. Respond ONLY in spoken conversational Punjabi (Gurmukhi script).
+2. Keep answers brief (2 simple actionable bullet points or short steps).
+3. Use polite terms like "ਵੀਰ ਜੀ" (Veer Ji) or "ਭੈਣ ਜੀ" (Bhen Ji).
+4. No heavy jargon or complex terms.`;
+
+        const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-3-flash-preview:generateContent?key=${geminiApiKey}`;
+
+        const payload = {
+          contents: [{ parts: [{ text: userPrompt }] }],
+          systemInstruction: { parts: [{ text: systemInstruction }] }
+        };
+
+        const res = await fetch(url, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload)
+        });
+
+        const data = await res.json();
+        const candidateText = data.candidates?.[0]?.content?.parts?.[0]?.text;
+        if (candidateText) {
+          return candidateText;
+        } else {
+          throw new Error('Invalid response structure');
+        }
+      }
+
+      // Speak Response via SpeechSynthesis API
+      function speakText(text) {
+        if (!synth) return;
+        synth.cancel(); // Stop current playing speech
+
+        const cleanText = text.replace(/[*#]/g, '');
+        currentUtterance = new SpeechSynthesisUtterance(cleanText);
+        currentUtterance.lang = langSelect.value;
+        currentUtterance.rate = 0.95; // Slightly calmer pace for clarity
+
+        // Find Punjabi / Hindi voice if available
+        const voices = synth.getVoices();
+        const paVoice = voices.find(v => v.lang.includes('pa') || v.lang.includes('hi'));
+        if (paVoice) currentUtterance.voice = paVoice;
+
+        currentUtterance.onstart = () => {
+          isSpeaking = true;
+          updateUIState('speaking');
+          drawSyntheticWaveform();
+        };
+
+        currentUtterance.onend = () => {
+          isSpeaking = false;
+          updateUIState('idle');
+        };
+
+        currentUtterance.onerror = () => {
+          isSpeaking = false;
+          updateUIState('idle');
+        };
+
+        synth.speak(currentUtterance);
+      }
+
+      // Start Real Audio Visualizer (Microphone)
+      async function startAudioVisualizer() {
+        try {
+          if (!audioCtx) {
+            audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+          }
+          if (audioCtx.state === 'suspended') {
+            await audioCtx.resume();
+          }
+          microphoneStream = await navigator.mediaDevices.getUserMedia({ audio: true });
+          const source = audioCtx.createMediaStreamSource(microphoneStream);
+          analyser = audioCtx.createAnalyser();
+          analyser.fftSize = 64;
+          source.connect(analyser);
+
+          renderMicWaveform();
+        } catch (e) {
+          console.warn('Microphone stream visualizer fallback:', e);
+          drawSyntheticWaveform();
+        }
+      }
+
+      function renderMicWaveform() {
+        if (!isListening || !analyser) return;
+
+        const bufferLength = analyser.frequencyBinCount;
+        const dataArray = new Uint8Array(bufferLength);
+        analyser.getByteFrequencyData(dataArray);
+
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        const barWidth = (canvas.width / bufferLength) * 1.5;
+        let x = 0;
+
+        for (let i = 0; i < bufferLength; i++) {
+          const barHeight = (dataArray[i] / 255) * canvas.height;
+          ctx.fillStyle = '#f59e0b';
+          ctx.beginPath();
+          ctx.roundRect(x, (canvas.height - barHeight) / 2, barWidth - 2, barHeight + 4, 4);
+          ctx.fill();
+          x += barWidth + 2;
+        }
+
+        animFrameId = requestAnimationFrame(renderMicWaveform);
+      }
+
+      // Draw Synthetic Waveform for Speaking or Fallback
+      function drawSyntheticWaveform() {
+        let step = 0;
+        function animate() {
+          if (!isSpeaking && !isListening) {
+            drawIdleWaveform();
+            return;
+          }
+          ctx.clearRect(0, 0, canvas.width, canvas.height);
+          ctx.fillStyle = isSpeaking ? '#10b981' : '#f59e0b';
+          
+          const bars = 24;
+          const barWidth = canvas.width / bars;
+
+          for (let i = 0; i < bars; i++) {
+            const h = Math.sin(step + i * 0.4) * (canvas.height * 0.4) + (canvas.height * 0.45);
+            ctx.beginPath();
+            ctx.roundRect(i * barWidth + 2, (canvas.height - h) / 2, barWidth - 4, h, 4);
+            ctx.fill();
+          }
+          step += 0.15;
+          animFrameId = requestAnimationFrame(animate);
+        }
+        animate();
+      }
+
+      function drawIdleWaveform() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        ctx.strokeStyle = 'rgba(245, 158, 11, 0.2)';
+        ctx.lineWidth = 2;
+        ctx.beginPath();
+        ctx.moveTo(0, canvas.height / 2);
+        ctx.lineTo(canvas.width, canvas.height / 2);
+        ctx.stroke();
+      }
+      drawIdleWaveform();
+
+      // Update UI Based on App State
+      function updateUIState(state) {
+        // Reset classes
+        ringOuter.className = 'absolute w-44 h-44 rounded-full transition-all duration-500';
+        ringInner.className = 'absolute w-36 h-36 rounded-full transition-all duration-500';
+        micBtn.className = 'relative z-10 w-28 h-28 sm:w-32 sm:h-32 rounded-full flex flex-col items-center justify-center shadow-2xl transition transform active:scale-95 border-4 border-amber-200';
+
+        if (state === 'listening') {
+          statusText.textContent = 'ਸੁਣ ਰਿਹਾ ਹੈ... / Listening...';
+          statusDot.className = 'w-3 h-3 rounded-full bg-red-500 animate-ping';
+          ringOuter.classList.add('bg-red-500/20', 'border-red-500/40', 'animate-pulse');
+          ringInner.classList.add('bg-red-500/30', 'border-red-400/50');
+          micBtn.classList.add('bg-gradient-to-tr', 'from-red-600', 'to-saffron-500', 'text-white', 'glow-amber');
+          micLabel.textContent = 'STOP';
+        } else if (state === 'thinking') {
+          statusText.textContent = 'ਸੋਚ ਰਿਹਾ ਹੈ... / Thinking...';
+          statusDot.className = 'w-3 h-3 rounded-full bg-amber-400 animate-spin';
+          ringOuter.classList.add('bg-amber-500/20', 'border-amber-500/40');
+          ringInner.classList.add('bg-amber-500/30', 'border-amber-400/50');
+          micBtn.classList.add('bg-gradient-to-tr', 'from-saffron-700', 'to-amber-500', 'text-white');
+          micLabel.textContent = 'WAIT';
+        } else if (state === 'speaking') {
+          statusText.textContent = 'ਬੋਲ ਰਿਹਾ ਹੈ... / Speaking...';
+          statusDot.className = 'w-3 h-3 rounded-full bg-emerald-400 animate-bounce';
+          ringOuter.classList.add('bg-emerald-500/20', 'border-emerald-500/40', 'animate-pulse');
+          ringInner.classList.add('bg-emerald-500/30', 'border-emerald-400/50');
+          micBtn.classList.add('bg-gradient-to-tr', 'from-emerald-600', 'to-teal-400', 'text-slate-950', 'glow-green');
+          micLabel.textContent = 'SPEAKING';
+          ttsBtnText.textContent = 'ਰੋਕੋ (Stop)';
+        } else {
+          // Idle State
+          statusText.textContent = 'ਨੱਪੋ ਤੇ ਬੋਲੋ / Tap Mic to Speak';
+          statusDot.className = 'w-3 h-3 rounded-full bg-saffron-500 animate-ping';
+          ringOuter.classList.add('bg-saffron-500/10', 'border-saffron-500/30');
+          ringInner.classList.add('bg-saffron-500/20', 'border-saffron-400/40');
+          micBtn.classList.add('bg-gradient-to-tr', 'from-saffron-600', 'via-saffron-500', 'to-amber-300', 'text-slate-950', 'glow-amber');
+          micLabel.textContent = 'ਬੋਲੋ / SPEAK';
+          ttsBtnText.textContent = 'ਸੁਣੋ (Listen)';
+          drawIdleWaveform();
+        }
+      }
+
+      function stopListening() {
+        isListening = false;
+        if (recognition) recognition.stop();
+        if (microphoneStream) {
+          microphoneStream.getTracks().forEach(t => t.stop());
+        }
+      }
+
+      // Mic Button Click Handler
+      micBtn.addEventListener('click', () => {
+        if (isSpeaking) {
+          synth.cancel();
+          isSpeaking = false;
+          updateUIState('idle');
+          return;
+        }
+
+        if (isListening) {
+          stopListening();
+          updateUIState('idle');
+        } else {
+          if (!recognition) {
+            alert('Your browser does not support Web Speech Recognition. Try Google Chrome on Android.');
+            return;
+          }
+          userTranscript.textContent = '"ਸੁਣ ਰਿਹਾ ਹੈ..."';
+          try {
+            recognition.start();
+          } catch(err) {
+            console.log('Recognition already started:', err);
+          }
+        }
+      });
+
+      // Quick Preset Button Click Handlers
+      document.querySelectorAll('.presetBtn').forEach(btn => {
+        btn.addEventListener('click', () => {
+          const query = btn.getAttribute('data-query');
+          userTranscript.textContent = `"${query}"`;
+          processVoiceQuery(query);
+        });
+      });
+
+      // TTS Replay / Stop Button
+      ttsPlayBtn.addEventListener('click', () => {
+        if (isSpeaking) {
+          synth.cancel();
+          isSpeaking = false;
+          updateUIState('idle');
+        } else {
+          const textToSpeak = aiResponse.textContent;
+          if (textToSpeak) speakText(textToSpeak);
+        }
+      });
+
+      // Language Select Change
+      langSelect.addEventListener('change', (e) => {
+        if (recognition) recognition.lang = e.target.value;
+      });
+
+      // API Modal Handlers
+      apiModalBtn.addEventListener('click', () => apiModal.classList.remove('hidden'));
+      closeModalBtn.addEventListener('click', () => apiModal.classList.add('hidden'));
+      saveKeyBtn.addEventListener('click', () => {
+        geminiApiKey = apiKeyInput.value.trim();
+        localStorage.setItem('baiji_gemini_key', geminiApiKey);
+        apiModal.classList.add('hidden');
+        statusText.textContent = geminiApiKey ? 'Gemini Live Enabled!' : 'Using Offline Knowledge';
+      });
+      clearKeyBtn.addEventListener('click', () => {
+        geminiApiKey = '';
+        apiKeyInput.value = '';
+        localStorage.removeItem('baiji_gemini_key');
+        apiModal.classList.add('hidden');
+        statusText.textContent = 'Using Offline Knowledge';
+      });
+
+      // Warm up voices on first user interaction
+      window.addEventListener('touchstart', () => synth && synth.getVoices(), { once: true });
+      window.addEventListener('click', () => synth && synth.getVoices(), { once: true });
+    });
+  </script>
+</body>
+</html>
